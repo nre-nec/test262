@@ -126,7 +126,8 @@
                     msgDiv.className = 'msg error';
                 }
             } catch (err) {
-                msgDiv.textContent = "حدث خطأ تقني";
+                console.error("Registration Error:", err);
+                msgDiv.textContent = "حدث خطأ تقني: " + err.message;
                 msgDiv.className = 'msg error';
             }
         });

@@ -43,9 +43,10 @@ async function supabaseRequest(method, endpoint, data = null) {
         };
     } catch (error) {
         console.error("Supabase Request Error:", error);
+        alert("خطأ في الاتصال بالقاعدة: " + error.message);
         return {
             status: 500,
-            body: { message: error.message }
+            body: { message: "Network Error: " + error.message }
         };
     }
 }
