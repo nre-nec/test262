@@ -111,8 +111,13 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            const submitBtn = e.target.querySelector('button');
+            const originalBtnText = submitBtn.textContent;
+
             msgDiv.className = 'msg';
             msgDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = "جاري الحفظ...";
 
             try {
                 const username = document.getElementById('username').value;
@@ -142,6 +147,9 @@
                 console.error("Registration Error:", err);
                 msgDiv.textContent = "حدث خطأ تقني: " + err.message;
                 msgDiv.className = 'msg error';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
             }
         });
     </script>

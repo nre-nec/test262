@@ -108,33 +108,47 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            const submitBtn = e.target.querySelector('button');
+            const originalBtnText = submitBtn.textContent;
+
             msgDiv.className = 'msg';
             msgDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = "جاري التحقق...";
 
             try {
                 const hashedPassword = await hashPassword(password);
                 const response = await supabaseRequest('GET', `/rest/v1/users?username=eq.${encodeURIComponent(username)}`);
 
-                if (response.status === 200 && response.body.length > 0) {
-                    const user = response.body[0];
-                    if (user.password === hashedPassword) {
-                        msgDiv.textContent = "تم تسجيل الدخول بنجاح! جاري توجيهك...";
-                        msgDiv.className = 'msg success';
-                        setTimeout(() => {
-                            window.location.href = `profile.html?u=${encodeURIComponent(user.username)}`;
-                        }, 1000);
+                if (response.status === 200) {
+                    if (response.body.length > 0) {
+                        const user = response.body[0];
+                        if (user.password === hashedPassword) {
+                            msgDiv.textContent = "تم تسجيل الدخول بنجاح! جاري توجيهك...";
+                            msgDiv.className = 'msg success';
+                            setTimeout(() => {
+                                window.location.href = `profile.html?u=${encodeURIComponent(user.username)}`;
+                            }, 1000);
+                        } else {
+                            msgDiv.textContent = "كلمة المرور غير صحيحة";
+                            msgDiv.className = 'msg error';
+                        }
                     } else {
-                        msgDiv.textContent = "كلمة المرور غير صحيحة";
+                        msgDiv.textContent = "اسم المستخدم غير موجود";
                         msgDiv.className = 'msg error';
                     }
                 } else {
-                    msgDiv.textContent = "اسم المستخدم غير موجود";
+                    // Show actual error from Supabase (e.g. table not found)
+                    msgDiv.textContent = "خطأ من القاعدة: " + (response.body.message || "فشلت العملية");
                     msgDiv.className = 'msg error';
                 }
             } catch (err) {
                 console.error("Login Error:", err);
                 msgDiv.textContent = "حدث خطأ تقني: " + err.message;
                 msgDiv.className = 'msg error';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
             }
         });
 
