@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل الدخول</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #1c1c1c;
+            color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #2a2a2a;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 300px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            color: #3ecf8e;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #333;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            padding: 10px;
+            background: #3ecf8e;
+            color: #1c1c1c;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2eb87e;
+        }
+
+        .msg {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .success {
+            background: rgba(62, 207, 142, 0.2);
+            color: #3ecf8e;
+            border: 1px solid #3ecf8e;
+            display: block;
+        }
+
+        .error {
+            background: rgba(255, 75, 75, 0.2);
+            color: #ff4b4b;
+            border: 1px solid #ff4b4b;
+            display: block;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>دخول</h2>
+        <div id="message" class="msg"></div>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="اسم المستخدم" required>
+            <input type="password" id="password" placeholder="كلمة المرور" required>
+            <button type="submit">دخول</button>
+        </form>
+        <a href="index.html" class="back">العودة للرئيسية</a>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msgDiv = document.getElementById('message');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            msgDiv.className = 'msg';
+            msgDiv.style.display = 'none';
+
+            try {
+                const hashedPassword = await hashPassword(password);
+                const response = await supabaseRequest('GET', `/rest/v1/users?username=eq.${encodeURIComponent(username)}`);
+
+                if (response.status === 200 && response.body.length > 0) {
+                    const user = response.body[0];
+                    if (user.password === hashedPassword) {
+                        msgDiv.textContent = "تم تسجيل الدخول بنجاح! أهلاً " + user.username;
+                        msgDiv.className = 'msg success';
+                    } else {
+                        msgDiv.textContent = "كلمة المرور غير صحيحة";
+                        msgDiv.className = 'msg error';
+                    }
+                } else {
+                    msgDiv.textContent = "اسم المستخدم غير موجود";
+                    msgDiv.className = 'msg error';
+                }
+            } catch (err) {
+                msgDiv.textContent = "حدث خطأ تقني";
+                msgDiv.className = 'msg error';
+            }
+        });
+    </script>
+</body>
+
+</html>

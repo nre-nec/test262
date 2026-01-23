@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>قائمة المستخدمين - فحص JS</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #1c1c1c;
+            color: #f4f4f4;
+            padding: 2rem;
+        }
+
+        h2 {
+            color: #3ecf8e;
+            border-bottom: 2px solid #3ecf8e;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            background: #333;
+            color: #3ecf8e;
+        }
+
+        tr:hover {
+            background: #333;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3ecf8e;
+            text-decoration: none;
+        }
+
+        #loading {
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back">← العودة للرئيسية</a>
+    <h2>المستخدمين في Supabase</h2>
+    <div id="loading">جاري تحميل البيانات...</div>
+
+    <table id="usersTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>اسم المستخدم</th>
+                <th>كلمة المرور (Hashed)</th>
+            </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+    </table>
+
+    <script src="config.js"></script>
+    <script>
+        async function fetchUsers() {
+            const response = await supabaseRequest('GET', '/rest/v1/users?select=*');
+            const loading = document.getElementById('loading');
+            const table = document.getElementById('usersTable');
+            const body = document.getElementById('usersBody');
+
+            loading.style.display = 'none';
+
+            if (response.status === 200) {
+                table.style.display = 'table';
+                response.body.forEach(user => {
+                    const row = `<tr>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td style="font-family: monospace; font-size: 0.8rem;">${user.password}</td>
+                    </tr>`;
+                    body.innerHTML += row;
+                });
+            } else {
+                loading.textContent = "خطأ في جلب البيانات: " + JSON.stringify(response.body);
+                loading.style.display = 'block';
+                loading.style.color = '#ff4b4b';
+            }
+        }
+        fetchUsers();
+    </script>
+</body>
+
+</html>

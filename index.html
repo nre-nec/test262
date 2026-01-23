@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تجربة Supabase PHP</title>
+    <title>تجربة Supabase JS</title>
     <style>
         :root {
             --primary: #3ecf8e;
@@ -11,6 +12,7 @@
             --light: #f4f4f4;
             --white: #ffffff;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--dark);
@@ -21,6 +23,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .container {
             background: rgba(255, 255, 255, 0.05);
             padding: 2rem;
@@ -32,15 +35,18 @@
             max-width: 400px;
             width: 100%;
         }
+
         h1 {
             color: var(--primary);
             margin-bottom: 2rem;
         }
+
         .menu {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
+
         .btn {
             background-color: var(--primary);
             color: var(--dark);
@@ -50,28 +56,33 @@
             font-weight: bold;
             transition: transform 0.2s, background-color 0.2s;
         }
+
         .btn:hover {
             background-color: #2eb87e;
             transform: translateY(-2px);
         }
+
         .btn-secondary {
             background-color: transparent;
             color: var(--primary);
             border: 1px solid var(--primary);
         }
+
         .btn-secondary:hover {
             background-color: rgba(62, 207, 142, 0.1);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>مشروع Supabase Demo</h1>
+        <h1>مشروع Supabase JS</h1>
         <div class="menu">
-            <a href="register.php" class="btn">تسجيل مستخدم جديد</a>
-            <a href="login.php" class="btn">تسجيل الدخول</a>
-            <a href="database_test.php" class="btn btn-secondary">عرض قاعدة البيانات</a>
+            <a href="register.html" class="btn">تسجيل مستخدم جديد</a>
+            <a href="login.html" class="btn">تسجيل الدخول</a>
+            <a href="database_test.html" class="btn btn-secondary">عرض قاعدة البيانات</a>
         </div>
     </div>
 </body>
+
 </html>
