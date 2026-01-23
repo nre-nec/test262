@@ -95,6 +95,9 @@
         <form id="registerForm">
             <input type="text" id="username" placeholder="اسم المستخدم" required>
             <input type="password" id="password" placeholder="كلمة المرور" required>
+            <input type="text" id="full_name" placeholder="الاسم الكامل">
+            <textarea id="bio" placeholder="نبذة شخصية"
+                style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #333; color: #fff; box-sizing: border-box; resize: vertical;"></textarea>
             <button type="submit">تسجيل</button>
         </form>
         <a href="index.html" class="back">العودة للرئيسية</a>
@@ -112,15 +115,25 @@
             msgDiv.style.display = 'none';
 
             try {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const full_name = document.getElementById('full_name').value;
+                const bio = document.getElementById('bio').value;
+
                 const hashedPassword = await hashPassword(password);
                 const response = await supabaseRequest('POST', '/rest/v1/users', {
                     username: username,
-                    password: hashedPassword
+                    password: hashedPassword,
+                    full_name: full_name,
+                    bio: bio
                 });
 
                 if (response.status === 201) {
-                    msgDiv.textContent = "تم التسجيل بنجاح!";
+                    msgDiv.textContent = "تم التسجيل بنجاح! جاري التوجيه...";
                     msgDiv.className = 'msg success';
+                    setTimeout(() => {
+                        window.location.href = `profile.html?u=${encodeURIComponent(username)}`;
+                    }, 1500);
                 } else {
                     msgDiv.textContent = "خطأ: " + (response.body.message || "فشلت العملية");
                     msgDiv.className = 'msg error';
