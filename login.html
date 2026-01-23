@@ -129,8 +129,18 @@
                     msgDiv.className = 'msg error';
                 }
             } catch (err) {
-                msgDiv.textContent = "حدث خطأ تقني";
+                console.error("Login Error:", err);
+                msgDiv.textContent = "حدث خطأ تقني: " + err.message;
                 msgDiv.className = 'msg error';
+            }
+        });
+
+        // Pre-fill username if provided in URL (?u=username)
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const u = params.get('u');
+            if (u) {
+                document.getElementById('username').value = u;
             }
         });
     </script>

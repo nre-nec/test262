@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>تجربة دخول سريعة</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #1c1c1c;
+            color: #f4f4f4;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            color: #3ecf8e;
+        }
+
+        .users-list {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .user-card {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #444;
+        }
+
+        .btn {
+            background: #3ecf8e;
+            color: #1c1c1c;
+            text-decoration: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: #2eb87e;
+        }
+
+        .back {
+            margin-bottom: 20px;
+            color: #3ecf8e;
+            text-decoration: none;
+        }
+
+        #status {
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back">← العودة للرئيسية</a>
+    <h2>اختر مستخدماً لتجربة الدخول</h2>
+    <div id="status">جاري جلب المستخدمين...</div>
+    <div id="usersList" class="users-list"></div>
+
+    <script src="config.js"></script>
+    <script>
+        async function loadUsers() {
+            const status = document.getElementById('status');
+            const list = document.getElementById('usersList');
+
+            try {
+                const response = await supabaseRequest('GET', '/rest/v1/users?select=username');
+                status.style.display = 'none';
+
+                if (response.status === 200) {
+                    if (response.body.length === 0) {
+                        status.textContent = "لا يوجد مستخدمين مسجلين بعد.";
+                        status.style.display = 'block';
+                        return;
+                    }
+
+                    response.body.forEach(user => {
+                        const card = document.createElement('div');
+                        card.className = 'user-card';
+                        card.innerHTML = `
+                            <span>${user.username}</span>
+                            <a href="login.html?u=${encodeURIComponent(user.username)}" class="btn">دخول بهذا الاسم</a>
+                        `;
+                        list.appendChild(card);
+                    });
+                } else {
+                    status.textContent = "خطأ: " + (response.body.message || "فشلت العملية");
+                    status.style.display = 'block';
+                    status.style.color = '#ff4b4b';
+                }
+            } catch (err) {
+                status.textContent = "حدث خطأ في الاتصال";
+                status.style.display = 'block';
+            }
+        }
+        loadUsers();
+    </script>
+</body>
+
+</html>
