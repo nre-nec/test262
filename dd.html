@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كلية الشمال للتمريض - الجدول الدراسي والتحليلات</title>
+    
+    <!-- خطوط جوجل (Cairo) لدعم اللغة العربية بشكل جميل -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js للرسوم البيانية -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            main: '#6a3e6e', // اللون البنفسجي الرئيسي من الصورة
+                            dark: '#4a2b4d',
+                            light: '#8e6291',
+                            accent: '#e6d8e8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        /* تأثير الزجاج للخلفيات */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* تنسيق الأشكال السداسية (Hexagons) في الهيدر */
+        .hexagon-container {
+            position: absolute;
+            bottom: 20px;
+            left: 5%;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .hexagon {
+            width: 80px;
+            height: 92px; /* width * 1.1547 */
+            background: rgba(255, 255, 255, 0.2);
+            position: relative;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+
+        .hexagon:hover {
+            background: rgba(106, 62, 110, 0.8);
+            transform: translateY(-10px);
+            border-color: #fff;
+        }
+
+        .hexagon i {
+            color: white;
+            font-size: 2rem;
+        }
+
+        /* تنسيق الجدول */
+        .custom-table th {
+            background-color: #6a3e6e;
+            color: white;
+        }
+        .custom-table tr:nth-child(even) {
+            background-color: #f3eff4;
+        }
+        .custom-table tr:hover {
+            background-color: #e6d8e8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الشريط العلوي -->
+    <div class="bg-brand-dark text-white py-2 text-sm">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <span><i class="fas fa-university ml-2"></i> التعليم الإلكتروني</span>
+                <span><i class="fas fa-external-link-alt ml-2"></i> البوابة الإلكترونية</span>
+            </div>
+            <div class="hidden md:block">مرحباً بك في بوابة البيانات الأكاديمية</div>
+        </div>
+    </div>
+
+    <!-- الهيدر والقائمة -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- الشعار (محاكاة) -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-brand-main rounded-full flex items-center justify-center text-white text-2xl">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-brand-main">كلية الشمال للتمريض الأهلية</h1>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">NORTH PRIVATE COLLEGE OF NURSING</p>
+                </div>
+            </div>
+
+            <!-- القائمة -->
+            <nav class="hidden lg:flex gap-6 text-brand-dark font-semibold text-sm">
+                <a href="#" class="hover:text-brand-light transition">الرئيسية</a>
+                <a href="#" class="hover:text-brand-light transition">شركة الشمال التعليمية</a>
+                <a href="#" class="hover:text-brand-light transition">عن الكلية</a>
+                <a href="#" class="hover:text-brand-light transition">أقسام و وكالات الكلية</a>
+                <a href="#" class="hover:text-brand-light transition">الخدمات</a>
+                <a href="#" class="hover:text-brand-light transition">المركز الاعلامي</a>
+                <a href="#" class="hover:text-brand-light transition">اتصل بنا</a>
+            </nav>
+            
+            <!-- زر موبايل -->
+            <button class="lg:hidden text-brand-main text-2xl"><i class="fas fa-bars"></i></button>
+        </div>
+    </header>
+
+    <!-- منطقة الهيرو (Hero Section) مع الخلفية والأشكال -->
+    <section class="relative h-[400px] w-full bg-gray-800 overflow-hidden">
+        <!-- صورة خلفية (مختبر طبي) -->
+        <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+             alt="Lab Background" 
+             class="absolute inset-0 w-full h-full object-cover opacity-60">
+        
+        <!-- طبقة لونية -->
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-main/80 to-blue-900/60 mix-blend-multiply"></div>
+
+        <!-- المحتوى النصي -->
+        <div class="absolute inset-0 flex flex-col justify-center items-center text-white text-center px-4 z-10">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">التحليل الأكاديمي للشعب الدراسية</h2>
+            <p class="text-xl opacity-90 max-w-2xl">لوحة بيانات تفاعلية لعرض الجداول الدراسية وتوزيع الطلاب والشعب للفصل الدراسي الحالي</p>
+        </div>
+
+        <!-- الأشكال السداسية العائمة (كما في الصورة المرفقة) -->
+        <div class="hexagon-container hidden md:flex animate-bounce" style="animation-duration: 3s;">
+            <div class="hexagon"><i class="fas fa-dna"></i></div>
+            <div class="hexagon" style="margin-bottom: 40px"><i class="fas fa-heartbeat"></i></div>
+            <div class="hexagon"><i class="fas fa-microscope"></i></div>
+            <div class="hexagon" style="margin-bottom: 40px"><i class="fas fa-user-nurse"></i></div>
+            <div class="hexagon"><i class="fas fa-pills"></i></div>
+        </div>
+    </section>
+
+    <!-- محتوى لوحة القيادة -->
+    <main class="container mx-auto px-4 py-8 -mt-10 relative z-20">
+        
+        <!-- بطاقات الملخص -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- إجمالي الطلاب -->
+            <div class="glass-effect p-6 rounded-xl shadow-lg border-t-4 border-brand-main flex items-center justify-between transform hover:scale-105 transition duration-300">
+                <div>
+                    <p class="text-gray-500 font-semibold mb-1">إجمالي المقاعد المسجلة</p>
+                    <h3 class="text-3xl font-bold text-gray-800" id="totalStudents">0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-purple-100 text-brand-main flex items-center justify-center text-xl">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+
+            <!-- عدد الشعب -->
+            <div class="glass-effect p-6 rounded-xl shadow-lg border-t-4 border-blue-500 flex items-center justify-between transform hover:scale-105 transition duration-300">
+                <div>
+                    <p class="text-gray-500 font-semibold mb-1">عدد الشعب الدراسية</p>
+                    <h3 class="text-3xl font-bold text-gray-800" id="totalSections">0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+            </div>
+
+            <!-- المقرر الأكثر تسجيلاً -->
+            <div class="glass-effect p-6 rounded-xl shadow-lg border-t-4 border-green-500 flex items-center justify-between transform hover:scale-105 transition duration-300">
+                <div>
+                    <p class="text-gray-500 font-semibold mb-1">المقرر الأكثر كثافة</p>
+                    <h3 class="text-lg font-bold text-gray-800" id="topCourse">جاري التحميل...</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+
+            <!-- عدد أعضاء هيئة التدريس -->
+            <div class="glass-effect p-6 rounded-xl shadow-lg border-t-4 border-orange-500 flex items-center justify-between transform hover:scale-105 transition duration-300">
+                <div>
+                    <p class="text-gray-500 font-semibold mb-1">عدد أعضاء هيئة التدريس</p>
+                    <h3 class="text-3xl font-bold text-gray-800" id="totalInstructors">0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xl">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم الرسوم البيانية -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- توزيع الطلاب حسب المقرر -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-bold text-brand-main mb-4 border-b pb-2"><i class="fas fa-chart-bar ml-2"></i>توزيع الطلاب حسب المقرر</h3>
+                <div class="h-64">
+                    <canvas id="courseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- توزيع الجنس -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-bold text-brand-main mb-4 border-b pb-2"><i class="fas fa-venus-mars ml-2"></i>نسبة الذكور إلى الإناث</h3>
+                <div class="h-64 flex justify-center">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول البيانات -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6 border-b flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50">
+                <h3 class="text-xl font-bold text-brand-main"><i class="fas fa-table ml-2"></i>تفاصيل الشعب الدراسية</h3>
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="بحث باسم المقرر أو الأستاذ..." class="pr-10 pl-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-main w-64 text-sm">
+                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-right custom-table">
+                    <thead>
+                        <tr>
+                            <th class="p-4 text-sm font-bold">رمز المقرر</th>
+                            <th class="p-4 text-sm font-bold">اسم المقرر</th>
+                            <th class="p-4 text-sm font-bold">الشعبة</th>
+                            <th class="p-4 text-sm font-bold">الجنس</th>
+                            <th class="p-4 text-sm font-bold">الأستاذ</th>
+                            <th class="p-4 text-sm font-bold">الموعد والمكان</th>
+                            <th class="p-4 text-sm font-bold">المسجلين</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="text-sm text-gray-700">
+                        <!-- سيتم تعبئة البيانات هنا بواسطة JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4 bg-gray-50 text-center text-gray-500 text-sm">
+                تم عرض جميع البيانات المتاحة
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-brand-dark text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center gap-4 mb-4">
+                <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-main transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-main transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-main transition"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p>&copy; 2024 كلية الشمال للتمريض. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <!-- سكربت البيانات والمنطق -->
+    <script>
+        // 1. البيانات الخام (تم تحويلها من النص المقدم إلى كائنات JS)
+        const rawData = [
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42221", gender: "اناث", instructor: "كريل دوريكو اغونور", schedule: "الأحد 08:00 ص - 02:00 م / معمل 3\nالخميس 08:00 ص - 02:00 م / معمل 3", count: 43 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42291", gender: "اناث", instructor: "ادلينا ماغتوتو سانتوس", schedule: "الأحد 08:00 ص - 02:00 م / معمل 1\nالثلاثاء 08:00 ص - 02:00 م / معمل 1", count: 25 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42311", gender: "اناث", instructor: "سهام شحاته مصطفى", schedule: "الأحد 04:00 م - 10:00 م / معمل الامومة 1", count: 48 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42371", gender: "ذكور", instructor: "ايمان مختار محمد جبر", schedule: "الأحد 08:00 ص - 02:00 م / معمل 3\nالثلاثاء 08:00 ص - 02:00 م / معمل 3", count: 19 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42441", gender: "ذكور", instructor: "موسى عبد الفتاح موسى", schedule: "الأحد 04:00 م - 10:00 م / معمل 7\nالثلاثاء 04:00 م - 10:00 م / معمل 7", count: 49 },
+            { code: "NURS312", name: "تمريض عناية بالغين أساسي عملي", section: "52041", gender: "اناث", instructor: "نهيد محمد اسماعيل", schedule: "الأحد 08:00 ص - 02:00 م / معمل أساسيات 2\nالخميس 08:00 ص - 02:00 م / معمل أساسيات 2", count: 21 },
+            { code: "NURS312", name: "تمريض عناية بالغين أساسي عملي", section: "52131", gender: "ذكور", instructor: "جيهان احمد محمد", schedule: "الأحد 04:00 م - 10:00 م / معمل 3\nالأربعاء 04:00 م - 10:00 م / معمل 3", count: 24 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62041", gender: "اناث", instructor: "هدايا اسماعيل ابو بكر", schedule: "الأحد 08:00 ص - 02:00 م / معمل 4\nالخميس 08:00 ص - 02:00 م / معمل 4", count: 46 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62111", gender: "اناث", instructor: "زينب ربيع عبدالمرضي", schedule: "الأحد 08:00 ص - 02:00 م / معمل الامومة 3", count: 15 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62131", gender: "اناث", instructor: "ضحى عبدالهادي عبدالجواد", schedule: "الأحد 08:00 ص - 02:00 م / معمل 7\nالثلاثاء 08:00 ص - 02:00 م / معمل 7", count: 53 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62221", gender: "ذكور", instructor: "عايده أحمد محمد", schedule: "الأحد 08:00 ص - 02:00 م / معمل 4\nالثلاثاء 08:00 ص - 02:00 م / معمل 4", count: 31 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82221", gender: "ذكور", instructor: "عماد محمد محمد", schedule: "الأحد 08:00 ص - 02:00 م / معمل أساسيات 2", count: 32 },
+            { code: "NURS432", name: "تمريض الأطفال عملي", section: "72221", gender: "اناث", instructor: "فاتن فتحي أحمد", schedule: "الأحد 04:00 م - 10:00 م / معمل أطفال 1", count: 47 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42191", gender: "اناث", instructor: "كريل دوريكو اغونور", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل 3\nالاثنين 08:00 ص - 02:00 م / معمل 3", count: 44 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42251", gender: "اناث", instructor: "اسماء عبدالله احمد", schedule: "الاثنين 08:00 ص - 02:00 م / معمل الامومة 1", count: 28 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42321", gender: "اناث", instructor: "ايمان مختار محمد", schedule: "الاثنين 04:00 م - 10:00 م / معمل 2\nالخميس 04:00 م - 10:00 م / معمل 2", count: 46 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42341", gender: "ذكور", instructor: "دانيال جوزيف ُاسفينا", schedule: "الاثنين 08:00 ص - 02:00 م / معمل 3\nالخميس 08:00 ص - 02:00 م / معمل 3", count: 48 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42401", gender: "ذكور", instructor: "نعيمه محمد السيد", schedule: "الاثنين 08:00 ص - 02:00 م / معمل أساسيات 1", count: 47 },
+            { code: "NURS312", name: "تمريض عناية بالغين أساسي عملي", section: "52011", gender: "اناث", instructor: "نهيد محمد اسماعيل", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل أساسيات 2\nالاثنين 08:00 ص - 02:00 م / معمل أساسيات 2", count: 34 },
+            { code: "NURS312", name: "تمريض عناية بالغين أساسي عملي", section: "52101", gender: "اناث", instructor: "هند ابوالسعود احمد", schedule: "الاثنين 04:00 م - 10:00 م / معمل 3\nالثلاثاء 04:00 م - 10:00 م / معمل 3", count: 53 },
+            { code: "NURS312", name: "تمريض عناية بالغين أساسي عملي", section: "52071", gender: "ذكور", instructor: "إياد ناجي محمد", schedule: "الاثنين 08:00 ص - 02:00 م / معمل 2\nالخميس 08:00 ص - 02:00 م / معمل 2", count: 23 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62011", gender: "اناث", instructor: "رشا عبدالحليم عبدالمعطي", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل 7\nالاثنين 08:00 ص - 02:00 م / معمل 7", count: 52 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62071", gender: "اناث", instructor: "ضحى عبدالهادي عبدالجواد", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل الامومة 3\nالاثنين 08:00 ص - 02:00 م / معمل الامومة 3", count: 55 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62101", gender: "اناث", instructor: "ادلينا ماغتوتو سانتوس", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل الامومة 1\nالاثنين 08:00 ص - 02:00 م / معمل 1", count: 12 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62171", gender: "ذكور", instructor: "احمد محمود - بسيوني", schedule: "الاثنين 08:00 ص - 02:00 م / معمل 1", count: 38 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62191", gender: "ذكور", instructor: "احمد جمال محمد", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل 2\nالاثنين 08:00 ص - 02:00 م / معمل 4", count: 12 },
+            { code: "NURS432", name: "تمريض الأطفال عملي", section: "72011", gender: "اناث", instructor: "هويدا محمد علي", schedule: "الاثنين 08:00 ص - 02:00 م / معمل أطفال 1", count: 51 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82021", gender: "اناث", instructor: "ايمان محمد محمد", schedule: "الاثنين 08:00 ص - 02:00 م / معمل حالات حرجة 1", count: 46 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42231", gender: "اناث", instructor: "زينب ربيع عبدالمرضي", schedule: "الثلاثاء 08:00 ص - 02:00 م / معمل الامومة 1", count: 43 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62051", gender: "اناث", instructor: "كريل دوريكو اغونور", schedule: "الثلاثاء 08:00 ص - 02:00 م / معمل الامومة 2", count: 24 },
+            { code: "NURS432", name: "تمريض الأطفال عملي", section: "72131", gender: "اناث", instructor: "مها ابراهيم فوده", schedule: "الثلاثاء 04:00 م - 10:00 م / معمل أطفال 2", count: 47 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82181", gender: "اناث", instructor: "اسماء ابراهيم عبدالعزيز", schedule: "الثلاثاء 04:00 م - 10:00 م / معمل حالات حرجة 2", count: 46 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82341", gender: "ذكور", instructor: "علي حسين عبدالمجيد", schedule: "الثلاثاء 04:00 م - 10:00 م / معمل حالات حرجة 1", count: 57 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82431", gender: "ذكور", instructor: "ايمان محمد محمد", schedule: "الثلاثاء 04:00 م - 10:00 م / معمل 4", count: 22 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42261", gender: "اناث", instructor: "هويدا محمد علي", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل 1\nالخميس 08:00 ص - 02:00 م / معمل 1", count: 54 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42351", gender: "ذكور", instructor: "غادة صبحي حسن", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل 1", count: 49 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "42411", gender: "ذكور", instructor: "كريم محمد عبدالهادي", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل 4\nالخميس 08:00 ص - 02:00 م / معمل 4", count: 51 },
+            { code: "NURS314", name: "تمريض عناية بالغين متقدم عملي", section: "62161", gender: "ذكور", instructor: "عايده أحمد محمد", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل 3\nالخميس 08:00 ص - 02:00 م / معمل 1", count: 21 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62231", gender: "ذكور", instructor: "نعيمه محمد السيد", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل علوم أساسية 3", count: 25 },
+            { code: "NURS432", name: "تمريض الأطفال عملي", section: "72051", gender: "اناث", instructor: "بتعه محمود محمد", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل أطفال 2", count: 27 },
+            { code: "NURS432", name: "تمريض الأطفال عملي", section: "72091", gender: "ذكور", instructor: "موسى عبد الفتاح موسى", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل علوم أساسية 2", count: 49 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82061", gender: "اناث", instructor: "ايمان محمد محمد", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل حالات حرجة 1", count: 48 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82101", gender: "اناث", instructor: "اسماء ابراهيم عبدالعزيز", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل حالات حرجة 2", count: 45 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82261", gender: "ذكور", instructor: "عماد محمد محمد", schedule: "الأربعاء 08:00 ص - 02:00 م / معمل علوم أساسية 4", count: 27 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42201", gender: "اناث", instructor: "اسماء عبدالله احمد", schedule: "الخميس 08:00 ص - 02:00 م / معمل الامومة 1", count: 44 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42281", gender: "اناث", instructor: "زينب ربيع عبدالمرضي", schedule: "الخميس 08:00 ص - 02:00 م / معمل الامومة 2", count: 41 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42381", gender: "ذكور", instructor: "جيهان احمد محمد", schedule: "الخميس 08:00 ص - 02:00 م / معمل أساسيات 1", count: 8 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "42431", gender: "ذكور", instructor: "نعيمه محمد السيد", schedule: "الخميس 04:00 م - 10:00 م / معمل الامومة 3", count: 37 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62021", gender: "اناث", instructor: "نبيله سالم محمد", schedule: "الخميس 08:00 ص - 02:00 م / معمل أطفال 1", count: 45 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62081", gender: "اناث", instructor: "ادلينا ماغتوتو سانتوس", schedule: "الخميس 08:00 ص - 02:00 م / معمل الامومة 3", count: 2 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62141", gender: "اناث", instructor: "سهام شحاته مصطفى", schedule: "الخميس 08:00 ص - 02:00 م / معمل أطفال 2", count: 48 },
+            { code: "NURS332", name: "تمريض الامومة عملي", section: "62201", gender: "ذكور", instructor: "احمد محمود - بسيوني", schedule: "الخميس 08:00 ص - 02:00 م / معمل أساسيات 2", count: 12 },
+            { code: "NURS432", name: "تمريض الأطفال عملي", section: "72171", gender: "ذكور", instructor: "فاتن فتحي أحمد", schedule: "الخميس 04:00 م - 10:00 م / معمل أطفال 1", count: 43 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82141", gender: "اناث", instructor: "اسماء ابراهيم عبدالعزيز", schedule: "الخميس 08:00 ص - 02:00 م / معمل حالات حرجة 2", count: 51 },
+            { code: "NURS412", name: "تمريض الحالات الحرجة عملي", section: "82301", gender: "ذكور", instructor: "علي حسين عبدالمجيد", schedule: "الخميس 08:00 ص - 02:00 م / معمل علوم أساسية 3", count: 22 },
+            { code: "NURS432", name: "تمريض الأطفال عملي", section: "72211", gender: "ذكور", instructor: "احمد جمال محمد", schedule: "الخميس 04:00 م - 10:00 م / معمل أطفال 2", count: 10 }
+        ];
+
+        // 2. دوال المعالجة والعرض
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable(rawData);
+            updateDashboard(rawData);
+            initCharts(rawData);
+        });
+
+        // دالة تعبئة الجدول
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b transition duration-200 hover:bg-purple-50";
+                
+                // تحديد لون الجنس
+                const genderBadge = row.gender === 'ذكور' 
+                    ? `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-bold">ذكور</span>`
+                    : `<span class="bg-pink-100 text-pink-700 px-2 py-1 rounded-full text-xs font-bold">إناث</span>`;
+
+                tr.innerHTML = `
+                    <td class="p-4 font-semibold text-brand-main">${row.code}</td>
+                    <td class="p-4">${row.name}</td>
+                    <td class="p-4 font-mono">${row.section}</td>
+                    <td class="p-4">${genderBadge}</td>
+                    <td class="p-4 text-gray-600">${row.instructor}</td>
+                    <td class="p-4 text-xs whitespace-pre-line leading-relaxed">${row.schedule}</td>
+                    <td class="p-4 font-bold text-center">${row.count}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // دالة البحث
+        document.getElementById('searchInput').addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = rawData.filter(row => 
+                row.name.includes(term) || 
+                row.instructor.includes(term) || 
+                row.code.toLowerCase().includes(term) ||
+                row.section.includes(term)
+            );
+            renderTable(filtered);
+        });
+
+        // 3. تحديث لوحة المعلومات
+        function updateDashboard(data) {
+            // إجمالي الطلاب
+            const totalStudents = data.reduce((sum, row) => sum + row.count, 0);
+            document.getElementById('totalStudents').innerText = totalStudents;
+
+            // إجمالي الشعب
+            document.getElementById('totalSections').innerText = data.length;
+
+            // عدد المدرسين (Unique)
+            const instructors = new Set(data.map(row => row.instructor));
+            document.getElementById('totalInstructors').innerText = instructors.size;
+
+            // المقرر الأكثر كثافة
+            const courseCounts = {};
+            data.forEach(row => {
+                courseCounts[row.name] = (courseCounts[row.name] || 0) + row.count;
+            });
+            let topCourseName = '';
+            let maxCount = 0;
+            for (const [name, count] of Object.entries(courseCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    topCourseName = name;
+                }
+            }
+            // اختصار الاسم إذا كان طويلاً
+            document.getElementById('topCourse').innerText = topCourseName.split(' ').slice(0, 3).join(' ') + '...';
+        }
+
+        // 4. الرسوم البيانية
+        function initCharts(data) {
+            // --- بيانات المخطط 1: الجنس ---
+            let maleCount = 0;
+            let femaleCount = 0;
+            data.forEach(row => {
+                if(row.gender === 'ذكور') maleCount += row.count;
+                else femaleCount += row.count;
+            });
+
+            const ctxGender = document.getElementById('genderChart').getContext('2d');
+            new Chart(ctxGender, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ذكور', 'إناث'],
+                    datasets: [{
+                        data: [maleCount, femaleCount],
+                        backgroundColor: ['#3b82f6', '#ec4899'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // --- بيانات المخطط 2: الطلاب لكل مقرر ---
+            const courseGroups = {};
+            data.forEach(row => {
+                // نأخذ الاسم المختصر (أول كلمتين أو ثلاثة) لتجنب الازدحام
+                const shortName = row.name.replace('تمريض ', '').replace('عملي', '').trim();
+                courseGroups[shortName] = (courseGroups[shortName] || 0) + row.count;
+            });
+
+            const ctxCourse = document.getElementById('courseChart').getContext('2d');
+            new Chart(ctxCourse, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(courseGroups),
+                    datasets: [{
+                        label: 'عدد الطلاب المسجلين',
+                        data: Object.values(courseGroups),
+                        backgroundColor: '#6a3e6e',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
